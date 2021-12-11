@@ -1,2 +1,2 @@
 # soccer-ds-stats
-Soccer Analytics using Data Science and Statistical methodologies
+Soccer Analytics projects using Data Science and Statistical methodologies
