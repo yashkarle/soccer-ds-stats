@@ -7,6 +7,7 @@ Created on Mon Sep  5 23:49:41 2022
 """
 import matplotlib.pyplot as plt
 import numpy as np
+import math
 from mplsoccer import Pitch, Sbopen
 
 parser = Sbopen()
@@ -17,12 +18,19 @@ df_matches = parser.match(competition_id=55, season_id=43)
 #   [3788741, 3788754, 3788766, 3794685, 3795107, 3795220, 3795506]
 #   [Turkey, Switzerland, Wales, Austria, Belgium, Spain, England]
 
-df, related, freeze, tactics = parser.event(3795107)
-passes = (
-    df.loc[df["type_name"] == "Pass"]
-    .loc[df["sub_type_name"] != "Throw-in"]
-    .set_index("id")
-)
+df_turkey, _, _, _ = parser.event(3788741)
+df_switzerland, _, _, _ = parser.event(3788754)
+df_wales, _, _, _ = parser.event(3788766)
+df_austria, _, _, _ = parser.event(3794685)
+df_belgium, _, _, _ = parser.event(3795107)
+df_spain, _, _, _ = parser.event(3795220)
+df_england, _, _, _ = parser.event(3795506)
+
+# passes = (
+#     df.loc[df["type_name"] == "Pass"]
+#     .loc[df["sub_type_name"] != "Throw-in"]
+#     .set_index("id")
+# )
 
 # TODO: df["pass_direction"] =
 useful_cols = [
@@ -60,6 +68,37 @@ useful_cols = [
     "x",
     "y",
 ]
+
+
+df_cluster1 = df_turkey[useful_cols].append(df_wales[useful_cols], ignore_index=True)
+df_cluster1 = df_cluster1.append(df_england[useful_cols], ignore_index=True)
+df_cluster2 = df_switzerland[useful_cols].append(
+    df_austria[useful_cols], ignore_index=True
+)
+df_cluster2 = df_cluster2.append(df_belgium[useful_cols], ignore_index=True)
+df_cluster3 = df_spain[useful_cols]
+
+
+df_cluster1["pass_angle_degrees"] = df_cluster1["pass_angle"].apply(
+    lambda x: math.degrees(x)
+)
+df_cluster2["pass_angle_degrees"] = df_cluster2["pass_angle"].apply(
+    lambda x: math.degrees(x)
+)
+df_cluster3["pass_angle_degrees"] = df_cluster3["pass_angle"].apply(
+    lambda x: math.degrees(x)
+)
+
+
+df_cluster1["pass_angle_back_weighted"] = df_cluster1["pass_angle_degrees"].apply(
+    lambda x: -math.cos(x)
+)
+df_cluster2["pass_angle_back_weighted"] = df_cluster2["pass_angle_degrees"].apply(
+    lambda x: -math.cos(x)
+)
+df_cluster3["pass_angle_back_weighted"] = df_cluster3["pass_angle_degrees"].apply(
+    lambda x: -math.cos(x)
+)
 
 
 # Jorginho name: "Jorge Luiz Frello Filho"
