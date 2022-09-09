@@ -194,16 +194,16 @@ def calc_edge_width(df_pass, minutes_till_first_sub, pass_weighting, pass_thresh
 df_belgium_edges = calc_edge_width(
     df_belgium_passes,
     minutes_till_first_sub=74,
-    pass_weighting="back",
+    pass_weighting="side",
     pass_threshold=3,
 )
 df_spain_edges = calc_edge_width(
-    df_spain_passes, minutes_till_first_sub=61, pass_weighting="back", pass_threshold=2
+    df_spain_passes, minutes_till_first_sub=61, pass_weighting="side", pass_threshold=2
 )
 df_england_edges = calc_edge_width(
     df_england_passes,
     minutes_till_first_sub=54,
-    pass_weighting="back",
+    pass_weighting="side",
     pass_threshold=5,
 )
 
@@ -348,7 +348,7 @@ def plot_pass_nw_grid(
     axs["endnote"].text(
         1,
         0.5,
-        "*passes weighted to highlight back passes and normalized to reflect per 90 minutes values",
+        "*passes weighted to highlight side passes and normalized to reflect per 90 minutes values",
         color="#c7d5cc",
         va="center",
         ha="right",
