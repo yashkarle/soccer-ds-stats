@@ -128,3 +128,4 @@ dmypy.json
 # Pyre type checker
 .pyre/
 .DS_Store
+Projects/4UppsalaMMS/data/F24/
