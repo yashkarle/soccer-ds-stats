@@ -129,3 +129,6 @@ dmypy.json
 .pyre/
 .DS_Store
 Projects/4UppsalaMMS/data/F24/
+Projects/4UppsalaMMS/data/Wyscout/events/
+Projects/1PoissonSimulation/data/events/
+Projects/3AVHackathon/data/
