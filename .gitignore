@@ -128,9 +128,8 @@ dmypy.json
 # Pyre type checker
 .pyre/
 .DS_Store
-Projects/4UppsalaMMS/data/F24/
 Projects/4UppsalaMMS/data/Wyscout/events/
 Projects/1PoissonSimulation/data/events/
 Projects/3AVHackathon/data/
-Projects/4UppsalaMMS/data/Assignment\ 3/freeze\ frames\ PL\ 2021/
-Projects/4UppsalaMMS/data/Assignment\ 3/possession\ chains\ PL\ 2021/
+Projects/4UppsalaMMS/data/Assignment\ 3/Curated/freeze\ frames\ PL\ 2021/
+Projects/4UppsalaMMS/data/Assignment\ 3/Curated/possession\ chains\ PL\ 2021/
