@@ -102,7 +102,7 @@ def get_season_players_ratings(competitions, competition_id: int):
 
     # Read Excel file with sheet name
     dict_df = pd.read_excel('./data/2022-11-17 central midfielders.xlsx',
-                            sheet_name=['Premier League', 'Band 1', 'Band 2'])
+                            sheet_name=list(competitions.values()))
     # Get DataFrame from Dict
     prem_df = dict_df.get(competitions[competition_id])
 

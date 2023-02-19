@@ -5,10 +5,6 @@ import data.twelve_api as twelve
 import pandas as pd
 from settings import create_default_configs
 
-#
-#    UI
-#
-
 
 def sidebar_select_competition_and_seasons():
     # Single selector for competition
@@ -26,9 +22,6 @@ def sidebar_select_competition_and_seasons():
 
     return competitions, selected_competition_id \
         # seasons, selected_season_ids
-#
-#    DATA PROCESSOR
-#
 
 
 def get_players_season_rankings(competitions, selected_competition_id):
@@ -56,6 +49,101 @@ def get_players_season_rankings(competitions, selected_competition_id):
     #             # 'season': k,
     #             # TODO: can add other attributes if needed
     #         })
+
+    base_cols = [
+        'Player',
+        'Team',
+        'Position',
+        'Age',
+        'Market value',
+        'Contract expires',
+        'Matches played',
+        'Minutes played',
+        'Foot',
+        'Height',
+    ]
+
+    ball_winner_cols = [
+        'Defensive duels per 90',
+        'Sliding tackles per 90',
+        'Fouls per 90',
+        'Yellow cards per 90',
+        'Shots blocked per 90',
+        'Received passes per 90',
+        'Interceptions per 90',
+    ]
+
+    deep_play_cols = [
+        'Successful dribbles, %',
+        'Accurate long passes, %',
+        'Accurate passes to penalty area, %',
+        'Accurate through passes, %',
+        'Accurate progressive passes, %',
+        'Through passes per 90',
+        'Forward passes per 90',
+        'Accurate forward passes, %',
+        'Long passes per 90',
+        'Accurate long passes, %',
+        'Deep completions per 90',
+        'Progressive passes per 90',
+        'Dribbles per 90',
+        'Progressive runs per 90',
+        'Accelerations per 90',
+    ]
+
+    att_play_cols = [
+
+    ]
+
+    runner_cols = [
+
+    ]
+
+    tempo_cols = [
+
+    ]
+
+    metrics_calc_cols = [
+        # Ball winner
+        'Aggression',
+        'Competitiveness',
+        'Decisions(off the ball)',
+        'Positioning',
+        # Deep lying playmaker
+        'Decisions(on the ball)',
+        'Passes through the lines',
+        'Progressive passing',
+        'Progressive Runs',
+        # Attacking playmaker
+        'Composure',
+        'Decisions(on the ball)',
+        'Goal contributions',
+        'Pass delivery',
+        'Passes through the lines',
+        'Progressive passing',
+        'Quality final action',
+        'Quality touches on the ball',
+        # Runner
+        'Decisions(on the ball)',
+        'Dribbles',
+        'Effective pressing',
+        'Progressive passing',
+        'Progressive runs',
+        # Tempo
+        'Composure',
+        'Decisions(on the ball)',
+        'Pass accuracy',
+        'Progressive passing',
+        'Quality touches on the ball',
+    ]
+
+    final_metrics = [
+        'Ball winner',
+        'Deep lying playmaker',
+        'Attacking playmaker',
+        'Runner',
+        'Tempo',
+    ]
 
     # df = pd.DataFrame(data)
     df = ret_df
