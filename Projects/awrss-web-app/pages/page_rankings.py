@@ -75,7 +75,6 @@ def get_players_season_rankings(competitions, selected_competition_id):
 
     deep_play_cols = [
         'Successful dribbles, %',
-        'Accurate long passes, %',
         'Accurate passes to penalty area, %',
         'Accurate through passes, %',
         'Accurate progressive passes, %',
@@ -92,7 +91,32 @@ def get_players_season_rankings(competitions, selected_competition_id):
     ]
 
     att_play_cols = [
-
+        'Shots on target, %',
+        'Deep completions per 90',
+        'Successful dribbles, %',
+        'Accurate long passes, %',
+        'Accurate passes to penalty area, %',
+        'Accurate through passes, %',
+        'Accurate progressive passes, %',
+        'Non-penalty goals per 90',
+        'xG per 90',
+        'Assists per 90',
+        'xA per 90',
+        'Accurate passes, %',
+        'Accurate forward passes, %',
+        'Through passes per 90',
+        'Accurate through passes, %',
+        'Forward passes per 90',
+        'Long passes per 90',
+        'Progressive passes per 90'
+        'Passes to penalty area per 90',
+        'Shot assists per 90',
+        'Shots per 90',
+        'Shots on target, %',
+        'Fouls suffered per 90',
+        'Smart passes per 90',
+        'Accurate smart passes, %',
+        'Key passes per 90',
     ]
 
     runner_cols = [
