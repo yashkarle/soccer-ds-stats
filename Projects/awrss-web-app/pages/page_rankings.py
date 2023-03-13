@@ -27,28 +27,8 @@ def sidebar_select_competition_and_seasons():
 def get_players_season_rankings(competitions, selected_competition_id):
 
     # Create Dataframe
-    data = list()
     ret_df = twelve.get_season_players_ratings(competitions, selected_competition_id)
-    # for k in ret.keys():  # Seasons
-    #
-    #     season_rankings = ret[k]
-    #     for row in ret_df:
-    #         # print()
-    #         data.append({
-    #             'player_id': row['playerId'],
-    #             'player': row['playerName'],
-    #             'team_id': row['teamId'],
-    #             'team': row['teamName'],
-    #             'position': 'other' if  row['position'] is None else row['position'],
-    #             'points': row['totalLeaguePoint']/1000,
-    #             'attack': next((x for x in row['points'] if x['type'] == 'attack'), {'value': 0})['value'],
-    #             'defence': next((x for x in row['points'] if x['type'] == 'defence'), {'value': 0})['value'],
-    #             'shot':  next((x for x in row['points'] if x['type'] == 'shot'), {'value': 0})['value'],
-    #             'matches': row['matchesCount'],
-    #             'minutes': row['playedMin'],
-    #             # 'season': k,
-    #             # TODO: can add other attributes if needed
-    #         })
+    print(ret_df.head())
 
     base_cols = [
         'Player',
@@ -63,7 +43,13 @@ def get_players_season_rankings(competitions, selected_competition_id):
         'Height',
     ]
 
-    ball_winner_cols = [
+    for col in ret_df.columns:
+        if col not in base_cols:
+            ret_df['{col} prank'.format(col=col)] = ret_df[col].rank(pct=True)
+
+    print(ret_df.head())
+
+    ball_winner_cols = {
         'Defensive duels per 90',
         'Sliding tackles per 90',
         'Fouls per 90',
@@ -71,7 +57,8 @@ def get_players_season_rankings(competitions, selected_competition_id):
         'Shots blocked per 90',
         'Received passes per 90',
         'Interceptions per 90',
-    ]
+    }
+
 
     deep_play_cols = [
         'Successful dribbles, %',
@@ -120,11 +107,39 @@ def get_players_season_rankings(competitions, selected_competition_id):
     ]
 
     runner_cols = [
-
+        'Accelerations per 90',
+        'Progressive runs per 90',
+        'Dribbles per 90',
+        'Accurate progressive passes, %',
+        'Progressive passes per 90',
+        'Deep completions per 90',
+        'Accurate long passes, %',
+        'Long passes per 90',
+        'Accurate forward passes, %',
+        'Forward passes per 90',
+        'Successful dribbles, %',
+        'Dribbles per 90',
+        'Accurate through passes, %',
+        'Accurate passes to penalty area, %'
     ]
 
     tempo_cols = [
-
+        'Accurate smart passes, %',
+        'Key passes per 90',
+        'Smart passes per 90',
+        'Fouls suffered per 90',
+        'Accurate progressive passes, %',
+        'Progressive passes per 90',
+        'Deep completions per 90',
+        'Accurate long passes, %',
+        'Long passes per 90',
+        'Accurate forward passes, %',
+        'Forward passes per 90',
+        'Accurate passes, %',
+        'Successful dribbles, %',
+        'Accurate passes to penalty area, %',
+        'Accurate through passes, %',
+        'Shots on target, %'
     ]
 
     metrics_calc_cols = [
@@ -169,7 +184,6 @@ def get_players_season_rankings(competitions, selected_competition_id):
         'Tempo',
     ]
 
-    # df = pd.DataFrame(data)
     df = ret_df
     return df.assign(attack_p90=df['Progressive runs per 90'])\
         .assign(defence_p90=df['Interceptions per 90'])\
