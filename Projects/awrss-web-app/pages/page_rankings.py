@@ -24,6 +24,13 @@ def sidebar_select_competition_and_seasons():
         # seasons, selected_season_ids
 
 
+def _add_weighted_metric(_df, new_metric_name, weights):
+    _df[new_metric_name] = 0.0
+    for metric in weights:
+        _df[new_metric_name] += _df[metric] * weights[metric]
+    return _df
+
+
 def get_players_season_rankings(competitions, selected_competition_id):
 
     # Create Dataframe
@@ -49,16 +56,40 @@ def get_players_season_rankings(competitions, selected_competition_id):
 
     print(ret_df.head())
 
-    ball_winner_cols = {
-        'Defensive duels per 90',
-        'Sliding tackles per 90',
-        'Fouls per 90',
-        'Yellow cards per 90',
-        'Shots blocked per 90',
-        'Received passes per 90',
-        'Interceptions per 90',
+    aggression_weights = {
+        'Fouls per 90 prank': 0.3,
+        'Sliding tackles per 90 prank': 0.1,
+        'Defensive duels per 90 prank': 0.3,
+        'Yellow cards per 90 prank': 0.3,
     }
+    ret_df = _add_weighted_metric(ret_df, 'Aggression', aggression_weights)
 
+    competitiveness_weights = {
+        'Defensive duels per 90 prank': 0.5,
+        'Sliding tackles per 90 prank': 0.2,
+        'Shots blocked per 90 prank': 0.3,
+    }
+    ret_df = _add_weighted_metric(ret_df, 'Competitiveness', competitiveness_weights)
+
+    decisions_off_ball_weights = {
+        'Received passes per 90 prank': 1,
+    }
+    ret_df = _add_weighted_metric(ret_df, 'Decisions(off the ball)', decisions_off_ball_weights)
+
+    positioning_weights = {
+        'Shots blocked per 90 prank': 0.5,
+        'Interceptions per 90 prank': 0.5,
+    }
+    ret_df = _add_weighted_metric(ret_df, 'Positioning', positioning_weights)
+    ball_winner_weights = {
+        'Aggression': 0.35,
+        'Competitiveness': 0.35,
+        'Decisions(off the ball)': 0.1,
+        'Positioning': 0.2
+    }
+    ret_df = _add_weighted_metric(ret_df, 'Ball winner', ball_winner_weights)
+
+    print(ret_df.head())
 
     deep_play_cols = [
         'Successful dribbles, %',
