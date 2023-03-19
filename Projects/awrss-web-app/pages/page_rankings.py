@@ -56,38 +56,30 @@ def get_players_season_rankings(competitions, selected_competition_id):
 
     print(ret_df.head())
 
-    aggression_weights = {
+    ret_df = _add_weighted_metric(ret_df, new_metric_name='Aggression', weights={
         'Fouls per 90 prank': 0.3,
         'Sliding tackles per 90 prank': 0.1,
         'Defensive duels per 90 prank': 0.3,
         'Yellow cards per 90 prank': 0.3,
-    }
-    ret_df = _add_weighted_metric(ret_df, 'Aggression', aggression_weights)
-
-    competitiveness_weights = {
+    })
+    ret_df = _add_weighted_metric(ret_df, new_metric_name='Competitiveness', weights={
         'Defensive duels per 90 prank': 0.5,
         'Sliding tackles per 90 prank': 0.2,
         'Shots blocked per 90 prank': 0.3,
-    }
-    ret_df = _add_weighted_metric(ret_df, 'Competitiveness', competitiveness_weights)
-
-    decisions_off_ball_weights = {
+    })
+    ret_df = _add_weighted_metric(ret_df, new_metric_name='Decisions(off the ball)', weights={
         'Received passes per 90 prank': 1,
-    }
-    ret_df = _add_weighted_metric(ret_df, 'Decisions(off the ball)', decisions_off_ball_weights)
-
-    positioning_weights = {
+    })
+    ret_df = _add_weighted_metric(ret_df, new_metric_name='Positioning', weights={
         'Shots blocked per 90 prank': 0.5,
         'Interceptions per 90 prank': 0.5,
-    }
-    ret_df = _add_weighted_metric(ret_df, 'Positioning', positioning_weights)
-    ball_winner_weights = {
+    })
+    ret_df = _add_weighted_metric(ret_df, new_metric_name='Ball winner', weights={
         'Aggression': 0.35,
         'Competitiveness': 0.35,
         'Decisions(off the ball)': 0.1,
         'Positioning': 0.2
-    }
-    ret_df = _add_weighted_metric(ret_df, 'Ball winner', ball_winner_weights)
+    })
 
     print(ret_df.head())
 
