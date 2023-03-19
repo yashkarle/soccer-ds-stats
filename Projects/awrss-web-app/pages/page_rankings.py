@@ -151,7 +151,7 @@ def get_players_season_rankings(competitions, selected_competition_id):
         'Key passes per 90 prank': 0.2,
     })
     # Attacking playmaker
-    ret_df = _add_weighted_metric(ret_df, new_metric_name='Deep lying playmaker', weights={
+    ret_df = _add_weighted_metric(ret_df, new_metric_name='Attacking playmaker', weights={
         'Composure': 0.05,
         'Decisions(on the ball)': 0.1,
         'Goal contributions': 0.125,
@@ -217,15 +217,13 @@ def get_players_season_rankings(competitions, selected_competition_id):
         'Ball winner',
         'Deep lying playmaker',
         'Attacking playmaker',
-        'Runner',
-        'Tempo',
+        # 'Runner',
+        # 'Tempo',
     ]
     print(ret_df[final_metrics].head())
 
     df = ret_df[final_metrics]
-    return df.assign(attack_p90=df['Progressive runs per 90'])\
-        .assign(defence_p90=df['Interceptions per 90'])\
-        .assign(shot_p90=df['Shots per 90'])
+    return df
 
 
 # Use default settings
