@@ -220,9 +220,9 @@ def get_players_season_rankings(competitions, selected_competition_id):
         # 'Runner',
         # 'Tempo',
     ]
-    print(ret_df[final_metrics].head())
+    print(ret_df[base_cols+final_metrics].head())
 
-    df = ret_df[final_metrics]
+    df = ret_df[base_cols+final_metrics]
     return df
 
 
