@@ -106,7 +106,7 @@ def get_players_season_rankings(competitions, selected_competition_id):
         'Accurate progressive passes, % prank': 0.2,
         'Deep completions per 90 prank': 0.2,
     })
-    ret_df = _add_weighted_metric(ret_df, new_metric_name='Progressive Runs', weights={
+    ret_df = _add_weighted_metric(ret_df, new_metric_name='Progressive runs', weights={
         'Progressive runs per 90 prank': 0.5,
         'Accelerations per 90 prank': 0.3,
         'Dribbles per 90 prank': 0.2,
@@ -116,7 +116,7 @@ def get_players_season_rankings(competitions, selected_competition_id):
         'Decisions(on the ball)': 0.25,
         'Passes through the lines': 0.3,
         'Progressive passing': 0.35,
-        'Progressive Runs': 0.1,
+        'Progressive runs': 0.1,
     })
 
     ret_df = _add_weighted_metric(ret_df, new_metric_name='Composure', weights={
@@ -162,63 +162,39 @@ def get_players_season_rankings(competitions, selected_competition_id):
         'Quality touches on the ball': 0.15,
     })
 
-    runner_cols = [
-        'Accelerations per 90 prank',
-        'Progressive runs per 90 prank',
-        'Dribbles per 90 prank',
-        'Accurate progressive passes, % prank',
-        'Progressive passes per 90 prank',
-        'Deep completions per 90 prank',
-        'Accurate long passes, % prank',
-        'Long passes per 90 prank',
-        'Accurate forward passes, % prank',
-        'Forward passes per 90 prank',
-        'Successful dribbles, % prank',
-        'Dribbles per 90 prank',
-        'Accurate through passes, % prank',
-        'Accurate passes to penalty area, % prank'
-    ]
+    ret_df = _add_weighted_metric(ret_df, new_metric_name='Dribbles', weights={
+        'Dribbles per 90 prank': 0.5,
+        'Successful dribbles, % prank': 0.5,
+    })
+    # Runner
+    ret_df = _add_weighted_metric(ret_df, new_metric_name='Runner', weights={
+        'Decisions(on the ball)': 0.2,
+        'Dribbles': 0.325,
+        'Progressive passing': 0.15,
+        'Progressive runs': 0.325,
+    })
 
-    tempo_cols = [
-        'Accurate smart passes, % prank',
-        'Key passes per 90 prank',
-        'Smart passes per 90 prank',
-        'Fouls suffered per 90 prank',
-        'Accurate progressive passes, % prank',
-        'Progressive passes per 90 prank',
-        'Deep completions per 90 prank',
-        'Accurate long passes, % prank',
-        'Long passes per 90 prank',
-        'Accurate forward passes, % prank',
-        'Forward passes per 90 prank',
-        'Accurate passes, % prank',
-        'Successful dribbles, % prank',
-        'Accurate passes to penalty area, % prank',
-        'Accurate through passes, % prank',
-        'Shots on target, % prank'
-    ]
-
-    metrics_calc_cols = [
-        # Runner
-        'Decisions(on the ball)',
-        'Dribbles',
-        'Effective pressing',
-        'Progressive passing',
-        'Progressive runs',
-        # Tempo
-        'Composure',
-        'Decisions(on the ball)',
-        'Pass accuracy',
-        'Progressive passing',
-        'Quality touches on the ball',
-    ]
+    ret_df = _add_weighted_metric(ret_df, new_metric_name='Pass accuracy', weights={
+        'Accurate progressive passes, % prank': 0.3,
+        'Accurate forward passes, % prank': 0.25,
+        'Accurate long passes, % prank': 0.25,
+        'Accurate passes, % prank': 0.2,
+    })
+    # Tempo
+    ret_df = _add_weighted_metric(ret_df, new_metric_name='Tempo', weights={
+        'Composure': 0.1,
+        'Decisions(on the ball)': 0.2,
+        'Pass accuracy': 0.3,
+        'Progressive passing': 0.2,
+        'Quality touches on the ball': 0.2,
+    })
 
     final_metrics = [
         'Ball winner',
         'Deep lying playmaker',
         'Attacking playmaker',
-        # 'Runner',
-        # 'Tempo',
+        'Runner',
+        'Tempo',
     ]
     print(ret_df[base_cols+final_metrics].head())
 
