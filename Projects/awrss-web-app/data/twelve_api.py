@@ -71,9 +71,9 @@ SEASONS_TO_TWELVE_SEASON_ID = {
 }
 
 
-def competitions() -> dict:
+def get_competitions() -> dict:
     """
-        Get All Competitions
+        Get All leagues
     """
     return {
         1: 'Premier League',
@@ -101,6 +101,10 @@ def get_season_players_ratings(competitions, competition_id: int):
     #     ret[season_id] = __app_players_ranking(competition_id, season_id)
 
     # Read Excel file with sheet name
+    # dict_df = pd.read_excel(
+    #     '/Users/yashkarle/soccer-ds-stats/Projects/awrss-web-app/data/2022-11-17 central midfielders raw.xlsx',
+    #     sheet_name=list(competitions.values())
+    # )
     dict_df = pd.read_excel('./data/2022-11-17 central midfielders raw.xlsx',
                             sheet_name=list(competitions.values()))
     # Get DataFrame from Dict
@@ -121,7 +125,7 @@ def get_match_points_stories(match_id: int):
     return __get_task(f"{TWELVE_API}/vnext2/matches/{match_id}/stories")
 
 
-@st.experimental_memo(ttl=60*60, show_spinner=True) # Caching the results for 60s*60
+@st.experimental_memo(ttl=60*60, show_spinner=True)  # Caching the results for 60s*60
 def get_match_players(match_id: int):
     """
         Get Match Details
@@ -129,20 +133,20 @@ def get_match_players(match_id: int):
     return __get_task(f"{TWELVE_API}/vnext2/matches/{match_id}/players")
 
 
-@st.experimental_memo(ttl=60*60, show_spinner=True) # Caching the results for 60s*60
+@st.experimental_memo(ttl=60*60, show_spinner=True)  # Caching the results for 60s*60
 def app_get_matches(competition_id):
 
     matches = __get_task(f"{TWELVE_API}/vnext2/matches/")
-    matches = [x for x in matches['completed'] if x['competitionId']==competition_id]
+    matches = [x for x in matches['completed'] if x['competitionId'] == competition_id]
     return matches[0]['matches']
 
 
-@st.experimental_memo(ttl=60*60, show_spinner=True) # Caching the results for 60s*60
+@st.experimental_memo(ttl=60*60, show_spinner=True)  # Caching the results for 60s*60
 def get_match_shots(match_id: int):
     return __get_task(f"{TWELVE_API}/vnext2/matches/{match_id}/shots")
 
 
-@st.experimental_memo(ttl=60*60, show_spinner=True) # Caching the results for 60s*60
+@st.experimental_memo(ttl=60*60, show_spinner=True)  # Caching the results for 60s*60
 def get_match_passes(match_id: int):
     return __get_task(f"{TWELVE_API}/vnext2/matches/{match_id}/passes")
 
@@ -155,10 +159,11 @@ def get_player_season_data(tournament_id, season_id, player_id, type_id):
         1003 = carry
         ...
     """
-    return __get_task(f"{TWELVE_API}/analytics/tournament/{COMPETITIONS_TO_TWELVE_TOURNAMENT.get(tournament_id)}/season/{SEASONS_TO_TWELVE_SEASON_ID.get(season_id)}/players/{player_id}/type_id/{type_id}/")
+    return __get_task(f"{TWELVE_API}/analytics/tournament/{COMPETITIONS_TO_TWELVE_TOURNAMENT.get(tournament_id)}"
+                      f"/season/{SEASONS_TO_TWELVE_SEASON_ID.get(season_id)}/players/{player_id}/type_id/{type_id}/")
 
 
-@st.experimental_memo(ttl=60*60, show_spinner=True) # Caching the results for 60s*60
+@st.experimental_memo(ttl=60*60, show_spinner=True)  # Caching the results for 60s*60
 def get_season_shots(tournament_id, season_id):
     """
         1 = pass
@@ -166,12 +171,14 @@ def get_season_shots(tournament_id, season_id):
         1003 = carry
         ...
     """
-    return __get_task(f"{TWELVE_API}/analytics/tournament/{COMPETITIONS_TO_TWELVE_TOURNAMENT.get(tournament_id)}/season/{SEASONS_TO_TWELVE_SEASON_ID.get(season_id)}/shots")
+    return __get_task(f"{TWELVE_API}/analytics/tournament/{COMPETITIONS_TO_TWELVE_TOURNAMENT.get(tournament_id)}"
+                      f"/season/{SEASONS_TO_TWELVE_SEASON_ID.get(season_id)}/shots")
 
 
 @st.experimental_memo(ttl=60*60, show_spinner=True)  # Caching the results for 60s*60
 def get_players_season_minutes(season_id, tournament_id, player_id):
-    return __get_task(f"{TWELVE_API}/analytics/tournament/{COMPETITIONS_TO_TWELVE_TOURNAMENT.get(tournament_id)}/season/{SEASONS_TO_TWELVE_SEASON_ID.get(season_id)}/players/{player_id}/minutes")
+    return __get_task(f"{TWELVE_API}/analytics/tournament/{COMPETITIONS_TO_TWELVE_TOURNAMENT.get(tournament_id)}"
+                      f"/season/{SEASONS_TO_TWELVE_SEASON_ID.get(season_id)}/players/{player_id}/minutes")
 
 
 def get_tournament_season_teams(tournament_id: int, season_id: int) -> dict:
@@ -180,7 +187,7 @@ def get_tournament_season_teams(tournament_id: int, season_id: int) -> dict:
 
 def get_team_matches(tournament_id: int, season_id: int, team_id_list: list) -> dict:
     return __get_task(f"{TWELVE_API}/analysis/competition/{tournament_id}/season/{season_id}/matches?teamIdList=" +
-                          ",".join(map(str, team_id_list)))
+                      ",".join(map(str, team_id_list)))
 
 
 @st.experimental_memo(ttl=60*60, show_spinner=True)  # Caching the results for 60s*60

@@ -2,14 +2,15 @@ import streamlit as st
 from st_row_buttons import st_row_buttons
 
 import data.twelve_api as twelve
-import pandas as pd
 from settings import create_default_configs
 
 
 def sidebar_select_competition_and_seasons():
     # Single selector for competition
-    competitions = twelve.competitions()
-    selected_competition_id = st.sidebar.selectbox("Competition", competitions, format_func=lambda x: competitions[x])
+    _competitions = twelve.get_competitions()
+    _selected_competition_id = st.sidebar.selectbox(
+        "Competition", _competitions, format_func=lambda x: _competitions[x]
+    )
 
     # Multi-selector for seasons
     # seasons = twelve.seasons()
@@ -20,7 +21,7 @@ def sidebar_select_competition_and_seasons():
     #     st.info("At least one season needs to be selected!")
     #     st.stop()
 
-    return competitions, selected_competition_id \
+    return _competitions, _selected_competition_id \
         # seasons, selected_season_ids
 
 
@@ -31,7 +32,7 @@ def _add_weighted_metric(_df, new_metric_name, weights):
         _df[new_metric_name] += _df[metric] * weights[metric]
         weights_sum += weights[metric]
     if weights_sum != 1:
-        print("Error: weights do not add up to 1")
+        print("Warning while creating {}: weights do not add up to 1".format(new_metric_name))
     return _df
 
 
@@ -39,7 +40,6 @@ def get_players_season_rankings(competitions, selected_competition_id):
 
     # Create Dataframe
     ret_df = twelve.get_season_players_ratings(competitions, selected_competition_id)
-    print(ret_df.head())
 
     base_cols = [
         'Player',
@@ -54,11 +54,10 @@ def get_players_season_rankings(competitions, selected_competition_id):
         'Height',
     ]
 
-    for col in ret_df.columns:
-        if col not in base_cols:
-            ret_df['{col} prank'.format(col=col)] = ret_df[col].rank(pct=True)
-
-    print(ret_df.head())
+    raw_metrics = [col for col in ret_df.columns if col not in base_cols]
+    ret_df = ret_df.dropna(subset=raw_metrics)
+    for col in raw_metrics:
+        ret_df['{col} prank'.format(col=col)] = ret_df[col].rank(pct=True)
 
     ret_df = _add_weighted_metric(ret_df, new_metric_name='Aggression', weights={
         'Fouls per 90 prank': 0.3,
@@ -206,7 +205,7 @@ def get_players_season_rankings(competitions, selected_competition_id):
 create_default_configs()
 
 # Sidebar menu for competition and seasons
-competitions, selected_competition_id = sidebar_select_competition_and_seasons()
+competitions_, selected_competition_id_ = sidebar_select_competition_and_seasons()
 
 # Get the data
 selected_sub_nav = st_row_buttons(['Player Ranking', 'Team Rankings'])
@@ -217,7 +216,7 @@ if selected_sub_nav == 'Player Ranking':
     # Title of the page
     st.title("Players Ranking")
 
-    df_players_rankings = get_players_season_rankings(competitions, selected_competition_id)
+    df_players_rankings = get_players_season_rankings(competitions_, selected_competition_id_)
 
     # Sidebar filter minutes
     minimal_minutes = st.sidebar.slider("Minutes", 0, 1000, 500)
