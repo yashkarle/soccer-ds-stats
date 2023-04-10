@@ -78,35 +78,34 @@ def get_competitions() -> dict:
     return {
         1: 'Premier League',
         2: 'Band 1',
-        3: 'Band 2'
+        3: 'Band 2',
     }
 
 
-def seasons() -> dict:
+def get_positions() -> dict:
     """
-        Get All Seasons
+        Get All Positions
     """
     return {
-        2021: 2021,
-        2022: 2022
+        # 1: 'Goalkeepers',
+        # 2: 'Central Defenders',
+        # 3: 'Wide Defenders',
+        # 4: 'Defensive Midfielders',
+        5: 'Central Midfielders',
     }
 
 
 @st.experimental_memo(ttl=60*60, show_spinner=True)  # Caching the results for 60s*60
-def get_season_players_ratings(competitions, competition_id: int):
+def get_season_players_ratings(competitions, competition_id: int, positions, position_id: int):
 
     """Get players season rankings"""
     # ret = dict()
     # for season_id in season_ids:
     #     ret[season_id] = __app_players_ranking(competition_id, season_id)
 
-    # Read Excel file with sheet name
-    # dict_df = pd.read_excel(
-    #     '/Users/yashkarle/soccer-ds-stats/Projects/awrss-web-app/data/2022-11-17 central midfielders raw.xlsx',
-    #     sheet_name=list(competitions.values())
-    # )
-    dict_df = pd.read_excel('./data/2022-11-17 central midfielders raw.xlsx',
-                            sheet_name=list(competitions.values()))
+    # Read Excel file for chosen position and load sheet for selected league
+    file_name = './data/{}.xlsx'.format(positions[position_id])
+    dict_df = pd.read_excel(file_name, sheet_name=list(competitions.values()))
     # Get DataFrame from Dict
     prem_df = dict_df.get(competitions[competition_id])
 

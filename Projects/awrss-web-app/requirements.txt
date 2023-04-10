@@ -6,4 +6,5 @@ matplotlib==3.5.2
 requests==2.24.0
 highlight-text==0.2
 openpyxl==3.1.2
+plotly==5.14.1
 st_row_buttons

@@ -12,17 +12,18 @@ def sidebar_select_competition_and_seasons():
         "Competition", _competitions, format_func=lambda x: _competitions[x]
     )
 
-    # Multi-selector for seasons
-    # seasons = twelve.seasons()
-    # selected_season_ids = st.sidebar.multiselect("Seasons", seasons, seasons, format_func=lambda x: seasons[x])
+    # Single selector for seasons
+    _positions = twelve.get_positions()
+    _selected_position_id = st.sidebar.selectbox(
+        "Position", _positions, format_func=lambda x: _positions[x]
+    )
 
-    # Check if seasons are selected
-    # if len(selected_season_ids) == 0:
-    #     st.info("At least one season needs to be selected!")
+    # Check if position is selected
+    # if len(_selected_position_id) == 0:
+    #     st.info("At least one position needs to be selected!")
     #     st.stop()
 
-    return _competitions, _selected_competition_id \
-        # seasons, selected_season_ids
+    return _competitions, _selected_competition_id, _positions, _selected_position_id
 
 
 def _add_weighted_metric(_df, new_metric_name, weights):
@@ -36,22 +37,41 @@ def _add_weighted_metric(_df, new_metric_name, weights):
     return _df
 
 
-def get_players_season_rankings(competitions, selected_competition_id):
+def _get_user_input_weights(final_metrics):
+    overall_user_weights = dict()
+    default_weight = 1.0/len(final_metrics)
+    weights_sum = 0.0
+    for metric in final_metrics:
+        weight = st.number_input(
+            label=metric,
+            min_value=0.0,
+            max_value=1.0,
+            value=default_weight,
+            step=0.05
+        )
+        weights_sum += weight
+        overall_user_weights[metric] = weight
+    if weights_sum != 1:
+        st.write("WARNING: Weights do not add up to 1!")
+    return overall_user_weights
+
+
+def get_players_season_rankings(competitions, selected_competition_id, positions, selected_position_id):
 
     # Create Dataframe
-    ret_df = twelve.get_season_players_ratings(competitions, selected_competition_id)
+    ret_df = twelve.get_season_players_ratings(competitions, selected_competition_id, positions, selected_position_id)
 
     base_cols = [
         'Player',
         'Team',
         'Position',
-        'Age',
-        'Market value',
-        'Contract expires',
-        'Matches played',
-        'Minutes played',
         'Foot',
         'Height',
+        'Age',
+        # 'Market value',
+        # 'Contract expires',
+        'Matches played',
+        'Minutes played',
     ]
 
     raw_metrics = [col for col in ret_df.columns if col not in base_cols]
@@ -59,6 +79,7 @@ def get_players_season_rankings(competitions, selected_competition_id):
     for col in raw_metrics:
         ret_df['{col} prank'.format(col=col)] = ret_df[col].rank(pct=True)
 
+    # Ball winner
     ret_df = _add_weighted_metric(ret_df, new_metric_name='Aggression', weights={
         'Fouls per 90 prank': 0.3,
         'Sliding tackles per 90 prank': 0.1,
@@ -77,7 +98,6 @@ def get_players_season_rankings(competitions, selected_competition_id):
         'Shots blocked per 90 prank': 0.5,
         'Interceptions per 90 prank': 0.5,
     })
-    # Ball winner
     ret_df = _add_weighted_metric(ret_df, new_metric_name='Ball winner', weights={
         'Aggression': 0.35,
         'Competitiveness': 0.35,
@@ -85,6 +105,7 @@ def get_players_season_rankings(competitions, selected_competition_id):
         'Positioning': 0.2,
     })
 
+    # Deep lying playmaker
     ret_df = _add_weighted_metric(ret_df, new_metric_name='Decisions(on the ball)', weights={
         'Accurate passes to penalty area, % prank': 0.2,
         'Accurate progressive passes, % prank': 0.2,
@@ -110,7 +131,6 @@ def get_players_season_rankings(competitions, selected_competition_id):
         'Accelerations per 90 prank': 0.3,
         'Dribbles per 90 prank': 0.2,
     })
-    # Deep lying playmaker
     ret_df = _add_weighted_metric(ret_df, new_metric_name='Deep lying playmaker', weights={
         'Decisions(on the ball)': 0.25,
         'Passes through the lines': 0.3,
@@ -118,6 +138,7 @@ def get_players_season_rankings(competitions, selected_competition_id):
         'Progressive runs': 0.1,
     })
 
+    # Attacking playmaker
     ret_df = _add_weighted_metric(ret_df, new_metric_name='Composure', weights={
         'Deep completions per 90 prank': 0.5,
         'Shots on target, % prank': 0.5,
@@ -149,7 +170,6 @@ def get_players_season_rankings(competitions, selected_competition_id):
         'Accurate smart passes, % prank': 0.25,
         'Key passes per 90 prank': 0.2,
     })
-    # Attacking playmaker
     ret_df = _add_weighted_metric(ret_df, new_metric_name='Attacking playmaker', weights={
         'Composure': 0.05,
         'Decisions(on the ball)': 0.1,
@@ -161,11 +181,11 @@ def get_players_season_rankings(competitions, selected_competition_id):
         'Quality touches on the ball': 0.15,
     })
 
+    # Runner
     ret_df = _add_weighted_metric(ret_df, new_metric_name='Dribbles', weights={
         'Dribbles per 90 prank': 0.5,
         'Successful dribbles, % prank': 0.5,
     })
-    # Runner
     ret_df = _add_weighted_metric(ret_df, new_metric_name='Runner', weights={
         'Decisions(on the ball)': 0.2,
         'Dribbles': 0.325,
@@ -173,13 +193,13 @@ def get_players_season_rankings(competitions, selected_competition_id):
         'Progressive runs': 0.325,
     })
 
+    # Tempo
     ret_df = _add_weighted_metric(ret_df, new_metric_name='Pass accuracy', weights={
         'Accurate progressive passes, % prank': 0.3,
         'Accurate forward passes, % prank': 0.25,
         'Accurate long passes, % prank': 0.25,
         'Accurate passes, % prank': 0.2,
     })
-    # Tempo
     ret_df = _add_weighted_metric(ret_df, new_metric_name='Tempo', weights={
         'Composure': 0.1,
         'Decisions(on the ball)': 0.2,
@@ -195,17 +215,21 @@ def get_players_season_rankings(competitions, selected_competition_id):
         'Runner',
         'Tempo',
     ]
-    print(ret_df[base_cols+final_metrics].head())
+    # print(ret_df[base_cols+final_metrics].head())
 
-    df = ret_df[base_cols+final_metrics]
+    # Overall
+    overall_user_weights = _get_user_input_weights(final_metrics)
+    ret_df = _add_weighted_metric(ret_df, new_metric_name='Overall', weights=overall_user_weights)
+
+    df = ret_df[base_cols+final_metrics+['Overall']]
     return df
 
 
 # Use default settings
 create_default_configs()
 
-# Sidebar menu for competition and seasons
-competitions_, selected_competition_id_ = sidebar_select_competition_and_seasons()
+# Sidebar menu for competition and position
+competitions_, selected_competition_id_, positions_, selected_position_id_ = sidebar_select_competition_and_seasons()
 
 # Get the data
 selected_sub_nav = st_row_buttons(['Player Ranking', 'Team Rankings'])
@@ -214,16 +238,32 @@ if selected_sub_nav == 'Player Ranking':
 
     # SUBPAGE 1
     # Title of the page
-    st.title("Players Ranking")
+    st.title("Players Ranking - {} {}".format(
+        competitions_[selected_competition_id_],
+        positions_[selected_position_id_])
+    )
 
-    df_players_rankings = get_players_season_rankings(competitions_, selected_competition_id_)
+    df_players_rankings = get_players_season_rankings(
+        competitions_, selected_competition_id_,
+        positions_, selected_position_id_
+    )
 
     # Sidebar filter minutes
-    minimal_minutes = st.sidebar.slider("Minutes", 0, 1000, 500)
+    max_age = st.sidebar.slider(
+        label="Age",
+        min_value=df_players_rankings['Age'].min().item(),
+        max_value=df_players_rankings['Age'].max().item(),
+        value=29)
+    minimal_minutes = st.sidebar.slider(
+        label="Minutes",
+        min_value=0,
+        max_value=1000,
+        value=500
+    )
 
     # Sidebar filter position, all positions in dataset
-    selected_positions = st.sidebar.multiselect("Positions", df_players_rankings['Position'].unique(),
-                                                df_players_rankings['Position'].unique())
+    # selected_positions = st.sidebar.multiselect("Positions", df_players_rankings['Position'].unique(),
+    #                                             df_players_rankings['Position'].unique())
 
     # Checkbox
     # if st.sidebar.checkbox('Aggregate seasons', False):
@@ -233,7 +273,8 @@ if selected_sub_nav == 'Player Ranking':
 
     # FILTER data
     df_players_rankings = df_players_rankings[df_players_rankings['Minutes played'] >= minimal_minutes]
-    df_players_rankings = df_players_rankings[df_players_rankings['Position'].isin(selected_positions)]
+    df_players_rankings = df_players_rankings[df_players_rankings['Age'] <= max_age]
+    # df_players_rankings = df_players_rankings[df_players_rankings['Position'].isin(selected_positions)]
 
     # Show Dataframe
     st.dataframe(df_players_rankings)
